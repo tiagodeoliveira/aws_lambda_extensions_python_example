@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-# SPDX-License-Identifier: MIT-0
 
 import json
 import os
@@ -43,12 +41,10 @@ def execute_custom_processing(event):
     print(f"[{LAMBDA_EXTENSION_NAME}] Received event: {json.dumps(event)}", flush=True)
     create_socket()
 
-# boiler plate code
 def handle_signal(signal, frame):
     # if needed pass this signal down to child processes
     print(f"[{LAMBDA_EXTENSION_NAME}] Received signal={signal}. Exiting.", flush=True)
     sys.exit(0)
-
 
 def register_extension():
     print(f"[{LAMBDA_EXTENSION_NAME}] Registering...", flush=True)
@@ -72,7 +68,6 @@ def register_extension():
 
     return ext_id
 
-
 def process_events(ext_id):
     headers = {
         'Lambda-Extension-Identifier': ext_id
@@ -91,7 +86,6 @@ def process_events(ext_id):
         else:
             execute_custom_processing(event)
 
-
 def main():
     # handle signals
     signal.signal(signal.SIGINT, handle_signal)
@@ -100,9 +94,6 @@ def main():
     # execute extensions logic
     extension_id = register_extension()
     process_events(extension_id)
-
-
-
 
 if __name__ == "__main__":
     main()
