@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda Python Extension Demo
+
+##########################################################################
+#  Parameters & Globals                                                  #
+##########################################################################
+Globals:
+  Function:
+    Tracing: Active
+    Tags:
+      Application: LambdaPythonExtensionDemo
+
+Resources:
+##########################################################################
+#  Lambda functions                                                      #
+##########################################################################
+  Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: python-function-extensions-demo
+      CodeUri: lambda_src/
+      Runtime: python3.8
+      Handler: lambda.handler
+      MemorySize: 512
+      Timeout: 60
+      Layers:
+        - !Ref ExtensionsLayer
+      Environment:
+        Variables:
+          SOCKET_PORT: 6000
+##########################################################################
+#  Lambda layers                                                         #
+##########################################################################
+  ExtensionsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: ipc-extension-layer
+      ContentUri: extensions_src/
+      RetentionPolicy: Delete
+      CompatibleRuntimes:
+      - python3.8
+    Metadata:
+      BuildMethod: makefile
+##########################################################################
+#  OUTPUTS                                                               #
+##########################################################################
+Outputs:
+  ExtensionsLayer:
+    Value: !Ref ExtensionsLayer
+    Description: Extension Layer ARN
+  Function:
+    Value: !Ref Function
+    Description: Lambda Function
